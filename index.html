@@ -52,16 +52,17 @@
     }
 
     .hero h1 {
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       font-size: clamp(30px, 4vw, 46px);
       letter-spacing: -0.04em;
     }
 
-    .hero p {
+    .hero-meta {
       margin: 0;
-      max-width: 900px;
-      color: rgba(255,255,255,0.9);
-      font-size: 16px;
+      color: rgba(255,255,255,0.82);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
     }
 
     .summary-grid {
@@ -81,7 +82,21 @@
       box-shadow: 0 6px 20px rgba(48, 74, 48, 0.05);
     }
 
-    .summary-card { padding: 18px; }
+    .summary-card {
+      padding: 18px;
+      cursor: pointer;
+      transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .summary-card:hover {
+      box-shadow: 0 8px 26px rgba(48, 74, 48, 0.13);
+      transform: translateY(-2px);
+    }
+
+    .summary-card.active-filter {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
 
     .summary-card .number {
       font-size: 30px;
@@ -116,7 +131,7 @@
       padding: 14px;
       box-shadow: 0 6px 20px rgba(48, 74, 48, 0.05);
       display: grid;
-      grid-template-columns: minmax(220px, 1.2fr) minmax(180px, 0.8fr) minmax(180px, 0.8fr);
+      grid-template-columns: minmax(220px, 1.2fr) minmax(180px, 0.8fr) minmax(180px, 0.8fr) auto;
       gap: 12px;
       align-items: center;
     }
@@ -139,6 +154,23 @@
       border-color: var(--green);
       box-shadow: 0 0 0 3px rgba(120, 190, 32, 0.16);
     }
+
+    #clearBtn {
+      display: none;
+      padding: 11px 16px;
+      border: 1.5px solid var(--green);
+      border-radius: 12px;
+      background: white;
+      color: var(--green-dark);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    #clearBtn:hover { background: var(--green-soft); }
 
     .section-title {
       display: flex;
@@ -254,7 +286,6 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      min-height: 260px;
     }
 
     .card-header {
@@ -312,6 +343,8 @@
       margin-top: auto;
       padding-top: 12px;
       border-top: 1px solid var(--line);
+      cursor: pointer;
+      user-select: none;
     }
 
     .why-label {
@@ -320,7 +353,27 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .why-label::after {
+      content: "▸";
+      font-size: 10px;
+    }
+
+    .why-wrap.open .why-label::after {
+      content: "▾";
+    }
+
+    .why-wrap .why {
+      display: none;
+      margin-top: 6px;
+    }
+
+    .why-wrap.open .why {
+      display: block;
     }
 
     .empty-state {
@@ -382,6 +435,7 @@
       .card,
       .period-card,
       .note-card { break-inside: avoid; }
+      .why-wrap .why { display: block; }
     }
   </style>
 </head>
@@ -389,7 +443,7 @@
   <main class="page">
     <section class="hero">
       <h1>Current Work Overview</h1>
-      <p>A clear view of my current responsibilities, recent work, upcoming priorities, pipeline projects, process changes to discuss, and areas where I want to continue growing.</p>
+      <p class="hero-meta">David Voci &nbsp;&middot;&nbsp; People Operations &nbsp;&middot;&nbsp; Updated May 4, 2026</p>
     </section>
 
     <section class="summary-grid" id="summaryGrid"></section>
@@ -403,6 +457,7 @@
         <select id="areaFilter">
           <option value="All">All areas</option>
         </select>
+        <button id="clearBtn">Clear filters</button>
       </div>
     </section>
 
@@ -416,10 +471,7 @@
         <div class="period-card">
           <h3>Last Two Weeks: Completed / In Progress</h3>
           <div class="task-list" id="lastTwoWeeksTasks"></div>
-          <ul class="highlight-list">
-            <li>Survey output included 55 manager spreadsheets, 7 division level spreadsheets, 36 department spreadsheets, and 65 SurveyMonkey dashboards.</li>
-            <li>Survey reporting time was reduced by roughly 33% year over year through AI assisted spreadsheet generation.</li>
-          </ul>
+          <div id="lastTwoWeeksHighlights"></div>
         </div>
 
         <div class="period-card">
@@ -556,7 +608,7 @@
         section: "Pipeline / Future Projects",
         area: "Automation",
         item: "Automate NDA Copy Sending",
-        details: "I want to automate sending a copy of the employee’s non disclosure agreement during the termination process.",
+        details: "I want to automate sending a copy of the employee's non disclosure agreement during the termination process.",
         why: "This removes another manual offboarding step and creates a cleaner process."
       },
       {
@@ -735,6 +787,11 @@
       }
     ];
 
+    const lastTwoWeeksHighlights = [
+      "Survey output included 55 manager spreadsheets, 7 division level spreadsheets, 36 department spreadsheets, and 65 SurveyMonkey dashboards.",
+      "Survey reporting time was reduced by roughly 33% year over year through AI assisted spreadsheet generation."
+    ];
+
     const nextTwoWeeks = [
       {
         title: "Finalize Sales and SDR promo automation",
@@ -791,6 +848,7 @@
     const searchInput = document.getElementById("searchInput");
     const sectionFilter = document.getElementById("sectionFilter");
     const areaFilter = document.getElementById("areaFilter");
+    const clearBtn = document.getElementById("clearBtn");
     const content = document.getElementById("content");
     const emptyState = document.getElementById("emptyState");
     const summaryGrid = document.getElementById("summaryGrid");
@@ -815,20 +873,37 @@
       });
     }
 
+    function updateClearBtn() {
+      const isFiltered = searchInput.value.trim() || sectionFilter.value !== "All" || areaFilter.value !== "All";
+      clearBtn.style.display = isFiltered ? "inline-block" : "none";
+    }
+
     function renderSummary() {
       summaryGrid.innerHTML = "";
       const summaryItems = [
-        { label: "Current Responsibilities", value: items.filter(i => i.section === "Current Responsibilities").length },
-        { label: "Active Projects", value: items.filter(i => i.section === "Active Projects").length },
-        { label: "Pipeline Projects", value: items.filter(i => i.section === "Pipeline / Future Projects").length },
-        { label: "Process Changes", value: items.filter(i => i.section === "Process / Access Changes").length },
-        { label: "Growth Areas", value: items.filter(i => i.section === "Role Growth / What I Want").length }
+        { label: "Current Responsibilities", section: "Current Responsibilities", value: items.filter(i => i.section === "Current Responsibilities").length },
+        { label: "Active Projects", section: "Active Projects", value: items.filter(i => i.section === "Active Projects").length },
+        { label: "Pipeline Projects", section: "Pipeline / Future Projects", value: items.filter(i => i.section === "Pipeline / Future Projects").length },
+        { label: "Process Changes", section: "Process / Access Changes", value: items.filter(i => i.section === "Process / Access Changes").length },
+        { label: "Growth Areas", section: "Role Growth / What I Want", value: items.filter(i => i.section === "Role Growth / What I Want").length }
       ];
 
       summaryItems.forEach(summary => {
         const card = document.createElement("div");
         card.className = "summary-card";
         card.innerHTML = `<div class="number">${summary.value}</div><div class="label">${summary.label}</div>`;
+        card.addEventListener("click", () => {
+          if (sectionFilter.value === summary.section) {
+            sectionFilter.value = "All";
+            card.classList.remove("active-filter");
+          } else {
+            sectionFilter.value = summary.section;
+            document.querySelectorAll(".summary-card").forEach(c => c.classList.remove("active-filter"));
+            card.classList.add("active-filter");
+          }
+          updateClearBtn();
+          render();
+        });
         summaryGrid.appendChild(card);
       });
     }
@@ -844,6 +919,19 @@
           </div>
         </div>
       `).join("");
+    }
+
+    function renderHighlights(data, targetId) {
+      const target = document.getElementById(targetId);
+      if (!data.length) return;
+      const ul = document.createElement("ul");
+      ul.className = "highlight-list";
+      data.forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        ul.appendChild(li);
+      });
+      target.appendChild(ul);
     }
 
     function cardTemplate(item) {
@@ -905,13 +993,28 @@
       });
     }
 
-    searchInput.addEventListener("input", render);
-    sectionFilter.addEventListener("change", render);
-    areaFilter.addEventListener("change", render);
+    content.addEventListener("click", e => {
+      const wrap = e.target.closest(".why-wrap");
+      if (wrap) wrap.classList.toggle("open");
+    });
+
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      sectionFilter.value = "All";
+      areaFilter.value = "All";
+      document.querySelectorAll(".summary-card").forEach(c => c.classList.remove("active-filter"));
+      updateClearBtn();
+      render();
+    });
+
+    searchInput.addEventListener("input", () => { updateClearBtn(); render(); });
+    sectionFilter.addEventListener("change", () => { updateClearBtn(); render(); });
+    areaFilter.addEventListener("change", () => { updateClearBtn(); render(); });
 
     populateFilters();
     renderSummary();
     renderTaskList(lastTwoWeeks, "lastTwoWeeksTasks");
+    renderHighlights(lastTwoWeeksHighlights, "lastTwoWeeksHighlights");
     renderTaskList(nextTwoWeeks, "nextTwoWeeksTasks");
     render();
   </script>
