@@ -596,7 +596,10 @@
         area: "HRIS Administration",
         item: "BambooHR Admin",
         details: "I admin our BambooHR account, including processes, workflows, approvals, settings, configuration changes, toggles, troubleshooting, and system updates.",
-        why: "BambooHR is the source of truth for employee data and many downstream processes depend on accurate configuration."
+        why: "BambooHR is the source of truth for employee data and many downstream processes depend on accurate configuration.",
+        log: [
+          { date: "Apr", topic: "Reconfigured legal access for Sarah Brenton with new management responsibilities." }
+        ]
       },
       {
         section: "Current Responsibilities",
@@ -1030,10 +1033,29 @@
           </div>
           <p class="details">${item.details}</p>
           ${item.impact ? `<div class="impact-wrap"><div class="impact-label">Impact</div><p class="impact-text">${item.impact}</p></div>` : ""}
-          <div class="why-wrap">
-            <div class="why-label">Why it matters</div>
-            <p class="why">${item.why}</p>
-          </div>
+          ${item.log && item.log.length ? `
+            <div class="why-wrap">
+              <div class="why-label">Work Log</div>
+              <div class="why">
+                <div class="meeting-log">
+                  ${item.log.map(e => `
+                    <div class="meeting-entry">
+                      <span class="meeting-date">${e.date}</span>
+                      <div class="meeting-body">
+                        ${e.attendees ? `<div class="meeting-attendees">${e.attendees}</div>` : ""}
+                        <div class="meeting-topic">${e.topic}</div>
+                      </div>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+            </div>
+          ` : `
+            <div class="why-wrap">
+              <div class="why-label">Why it matters</div>
+              <p class="why">${item.why}</p>
+            </div>
+          `}
         </article>
       `;
     }
