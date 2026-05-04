@@ -371,6 +371,47 @@
       font-weight: 600;
     }
 
+    .meeting-log {
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    .meeting-log-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .meeting-entry {
+      display: flex;
+      gap: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .meeting-entry:last-child { border-bottom: none; }
+
+    .meeting-date {
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 46px;
+    }
+
+    .meeting-body { flex: 1; }
+
+    .meeting-attendees {
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 1px;
+    }
+
+    .meeting-topic { color: var(--muted); }
+
     .why-wrap {
       margin-top: auto;
       padding-top: 12px;
