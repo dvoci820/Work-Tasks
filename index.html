@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Current Work Overview</title>
+  <style>
+    :root {
+      --bg: #f7faf7;
+      --card: #ffffff;
+      --text: #1f2d1f;
+      --muted: #637063;
+      --line: #dce7dc;
+      --green: #78be20;
+      --green-dark: #4f8f1f;
+      --green-soft: #eef8e2;
+      --blue-soft: #eef6f7;
+      --blue-text: #3f6b73;
+      --orange-soft: #fff4e8;
+      --orange-text: #b56d1d;
+      --purple-soft: #f3eefc;
+      --purple-text: #7553b3;
+      --red-soft: #fdeeee;
+      --red-text: #c34a4a;
+      --shadow: 0 10px 28px rgba(48, 74, 48, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 34px 24px 56px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #78be20 0%, #4f8f1f 100%);
+      color: white;
+      border-radius: 26px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 4vw, 46px);
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 900px;
+      color: rgba(255,255,255,0.9);
+      font-size: 16px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 22px;
+    }
+
+    .summary-card,
+    .period-card,
+    .note-card,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 6px 20px rgba(48, 74, 48, 0.05);
+    }
+
+    .summary-card { padding: 18px; }
+
+    .summary-card .number {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 2px;
+      color: var(--green-dark);
+    }
+
+    .summary-card .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247, 250, 247, 0.94);
+      backdrop-filter: blur(12px);
+      padding: 14px 0 16px;
+      margin-bottom: 8px;
+    }
+
+    .control-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 6px 20px rgba(48, 74, 48, 0.05);
+      display: grid;
+      grid-template-columns: minmax(220px, 1.2fr) minmax(180px, 0.8fr) minmax(180px, 0.8fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      font-size: 14px;
+      background: white;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(120, 190, 32, 0.16);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin: 30px 0 12px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+      color: var(--green-dark);
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .period-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .period-card {
+      padding: 18px;
+    }
+
+    .period-card h3,
+    .note-card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .task-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      background: #f8fbf6;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .task-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--green);
+      flex: 0 0 auto;
+      margin-top: 6px;
+    }
+
+    .task-text {
+      flex: 1;
+    }
+
+    .task-text strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--text);
+    }
+
+    .task-text span {
+      color: var(--muted);
+    }
+
+    .highlight-list {
+      margin: 14px 0 0;
+      padding-left: 20px;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .highlight-list li { margin: 7px 0; }
+
+    .two-col-notes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .note-card {
+      padding: 18px;
+    }
+
+    .note-card p {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 260px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .area {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 5px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tag {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.current { background: var(--green-soft); color: var(--green-dark); }
+    .tag.active { background: var(--blue-soft); color: var(--blue-text); }
+    .tag.pipeline { background: var(--orange-soft); color: var(--orange-text); }
+    .tag.process { background: var(--red-soft); color: var(--red-text); }
+    .tag.growth { background: var(--purple-soft); color: var(--purple-text); }
+
+    .details,
+    .why {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .why-wrap {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .why-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 5px;
+    }
+
+    .empty-state {
+      display: none;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 30px;
+      text-align: center;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+
+    .print-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .summary-grid,
+      .cards,
+      .period-grid,
+      .two-col-notes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .control-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .period-grid,
+      .two-col-notes {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page { padding: 20px 14px 40px; }
+      .hero { padding: 24px; }
+      .summary-grid,
+      .cards { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .controls,
+      .print-note { display: none; }
+      body { background: white; }
+      .page { max-width: none; padding: 0; }
+      .hero,
+      .summary-card,
+      .period-card,
+      .note-card,
+      .card { box-shadow: none; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card,
+      .period-card,
+      .note-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>Current Work Overview</h1>
+      <p>A clear view of my current responsibilities, recent work, upcoming priorities, pipeline projects, process changes to discuss, and areas where I want to continue growing.</p>
+    </section>
+
+    <section class="summary-grid" id="summaryGrid"></section>
+
+    <section class="controls">
+      <div class="control-card">
+        <input id="searchInput" type="search" placeholder="Search by project, system, partner, or keyword" />
+        <select id="sectionFilter">
+          <option value="All">All sections</option>
+        </select>
+        <select id="areaFilter">
+          <option value="All">All areas</option>
+        </select>
+      </div>
+    </section>
+
+    <section id="workSnapshot">
+      <div class="section-title">
+        <h2>Recent and Upcoming Work Snapshot</h2>
+        <span>Last two weeks and next two weeks</span>
+      </div>
+
+      <div class="period-grid">
+        <div class="period-card">
+          <h3>Last Two Weeks: Completed / In Progress</h3>
+          <div class="task-list" id="lastTwoWeeksTasks"></div>
+          <ul class="highlight-list">
+            <li>Survey output included 55 manager spreadsheets, 7 division level spreadsheets, 36 department spreadsheets, and 65 SurveyMonkey dashboards.</li>
+            <li>Survey reporting time was reduced by roughly 33% year over year through AI assisted spreadsheet generation.</li>
+          </ul>
+        </div>
+
+        <div class="period-card">
+          <h3>Next Two Weeks: Focus Areas</h3>
+          <div class="task-list" id="nextTwoWeeksTasks"></div>
+        </div>
+      </div>
+
+      <div class="two-col-notes">
+        <div class="note-card">
+          <h3>Survey Wrap Up: What Went Well</h3>
+          <p>I figured out a way to use AI to help generate manager and department level survey spreadsheets. It does not do 100% of the work, but it saved an estimated 10 to 20 minutes per manager by creating much of the survey breakdown automatically.</p>
+        </div>
+        <div class="note-card">
+          <h3>Survey Wrap Up: What Did Not Work</h3>
+          <p>SurveyMonkey could not fully support the dashboard approach. The goal was to build all manager dashboards in SurveyMonkey, but once we reached 65 dashboards, the system became too slow to work with efficiently. The AI generated spreadsheet approach ended up being faster and may be the better path next year.</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="content"></div>
+    <div class="empty-state" id="emptyState">No items match the current filters.</div>
+    <p class="print-note">Tip: Use the filters during the conversation, or print/save as PDF for a cleaner handoff document.</p>
+  </main>
+
+  <script>
+    const items = [
+      {
+        section: "Current Responsibilities",
+        area: "Team Coordination",
+        item: "HR Operations Sync",
+        details: "I run an HR Operations sync every other Tuesday. Current attendees include myself, Justin, Grant, Jordan Lewis from Talent Operations, and Austin from IT.",
+        why: "This keeps key HR Ops, Talent Ops, and IT partners aligned on operational work."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "Engagement Surveys",
+        item: "April Engagement Survey",
+        details: "I run our April engagement survey through SurveyMonkey, including setup, launch, reporting, and dashboard support.",
+        why: "This is one of our larger annual feedback processes and supports leader visibility into engagement trends."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "HRIS Administration",
+        item: "BambooHR Admin",
+        details: "I admin our BambooHR account, including processes, workflows, approvals, settings, configuration changes, toggles, troubleshooting, and system updates.",
+        why: "BambooHR is the source of truth for employee data and many downstream processes depend on accurate configuration."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "Compliance Reporting",
+        item: "Equifax Work Number and WOTC Reports",
+        details: "On payroll run Fridays, every other Friday, I download and create reports to upload to Equifax for The Work Number and WOTC compliance.",
+        why: "This is a recurring compliance process that needs to happen on time and accurately."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "Product Partnership",
+        item: "BambooHR Product Feature Testing",
+        details: "I work with the Product team when new BambooHR features are launching so we can enable, test, and provide feedback.",
+        why: "This helps us adopt new features early and gives Product feedback from a large internal customer."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "Reporting",
+        item: "HRBP Ad Hoc Reporting",
+        details: "I support HRBPs with ad hoc reporting requests.",
+        why: "This helps HRBPs get accurate employee, org, survey, and operational data when needed."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "Promo / Performance Reviews",
+        item: "Promo and Performance Cycles",
+        details: "I configure both the promo and performance cycles in the system, upload all completed changes once the cycles are finalized, and provide reporting support to HRBPs as needed. These processes happen twice a year.",
+        why: "These cycles are major People processes that require accurate system setup, clean data, timely uploads, and reporting support for HRBPs and Total Rewards."
+      },
+      {
+        section: "Current Responsibilities",
+        area: "Engagement Surveys",
+        item: "December eNPS Survey",
+        details: "I run our December eNPS survey through BambooHR.",
+        why: "This gives us a recurring company sentiment measure inside BambooHR."
+      },
+      {
+        section: "Active Projects",
+        area: "Automation",
+        item: "Sales and SDR Promotion Tracking Sheet Automation",
+        details: "I am working with Kim Ayala to automate adding information into the Sales and SDR promotion tracking sheet.",
+        why: "This should reduce manual work and improve consistency in promotion tracking."
+      },
+      {
+        section: "Active Projects",
+        area: "Event Support",
+        item: "Spring Huddle Employee List Support",
+        details: "I am working with Ariadna Matto to provide accurate employee lists and employee information for the upcoming Spring Huddle meeting.",
+        why: "This supports planning and coordination for a large upcoming meeting."
+      },
+      {
+        section: "Active Projects",
+        area: "Mentor Program Support",
+        item: "Sales Mentorship Program Data and Analytics",
+        details: "I provide data and analytics to measure the success of the Sales mentorship program, including mentee retention, performance score trends over time, and employee engagement measurements. I work with Allie Saunders, the Sales Enablement Specialist leading the program. This is ongoing for now, though it may fade once the new mentorship software is fully implemented.",
+        why: "This helps Sales understand whether the mentorship program is having a measurable impact on retention, performance, and engagement."
+      },
+      {
+        section: "Active Projects",
+        area: "AI / Systems",
+        item: "BambooHR and Novi Connection",
+        details: "I am working with IT to build a connection between BambooHR and Novi so Novi can access approved information from BambooHR.",
+        why: "This could improve AI driven HR support and reduce manual ticket volume."
+      },
+      {
+        section: "Active Projects",
+        area: "Product Partnership",
+        item: "Product Release Coordination",
+        details: "I have a Slack channel called Product Release Coordination where I receive updates on alpha features and can jump in to test and give feedback.",
+        why: "This gives People Ops a way to participate in feature testing and share feedback before broader release."
+      },
+      {
+        section: "Active Projects",
+        area: "Systems Integration",
+        item: "Remote and Okta Integration Setup",
+        details: "I am working with Brian Siegel from IT on setup of the Okta integration with Remote for the people who need access to that system. We have made good progress and are continuing to work through setup.",
+        why: "This should improve access management for Remote users and reduce manual system administration."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "Automate Termination DocuSign Agreement",
+        details: "I want to automate the DocuSign agreement we send to every person during the termination process.",
+        why: "This would reduce manual steps, increase consistency, and lower the chance of missing required documentation."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "Automate NDA Copy Sending",
+        details: "I want to automate sending a copy of the employee’s non disclosure agreement during the termination process.",
+        why: "This removes another manual offboarding step and creates a cleaner process."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "Simplify Termination Workflow",
+        details: "Ideally, the only manual steps for our team would be ending the employment itself and importing the offboarding tasks.",
+        why: "This would make terminations cleaner, faster, and less dependent on manual follow up."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "BambooHR Access Level Change Log",
+        details: "I want to create a BambooHR access level change log through Jira to track who requested an access change, what they requested, and when it was processed. BambooHR has an audit trail today, but it mainly shows when a change was made and does not clearly show who requested it or why.",
+        why: "This would improve compliance, internal controls, and visibility into sensitive HRIS access changes."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Survey Automation",
+        item: "Automate Survey Dashboard Creation",
+        details: "I want to automate the creation of survey dashboards. I got closer this most recent cycle, and dashboard creation was taking much less time by the end of the process.",
+        why: "This could significantly reduce survey reporting time and make dashboard creation more repeatable."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Survey Strategy",
+        item: "Explore Moving Away From SurveyMonkey",
+        details: "I want to explore whether we can eventually branch off SurveyMonkey entirely and build our own way to create, launch, and roll out surveys, likely using AI.",
+        why: "This could give us more flexibility, ownership, and control over the survey process."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "Automate Equifax Work Number and WOTC Reports",
+        details: "I want to automate almost the entire process for Equifax Work Number and WOTC reporting.",
+        why: "This is recurring manual work every payroll cycle and is a strong automation candidate."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "Automate Total Rewards Statement Uploads into BambooHR",
+        details: "I want to further automate uploading Total Rewards statements into BambooHR during larger pay change cycles like Focal Review. Historically, this took eight people roughly four to five days to upload over 1,000 documents one by one. This year, I built an Apple automation that allowed me to complete the process myself in about three days. The next goal is to finish the automation so one person can complete the upload process in roughly two hours.",
+        why: "This would significantly reduce manual work, improve consistency, and turn a multi person, multi day process into a much faster automated workflow."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Process Improvement",
+        item: "Redo Internal Hire Process",
+        details: "I want to redo the internal hire process because internal hires currently get caught in Payroll approval. Payroll waits until current payroll closes to approve changes, which delays job title, division, and department updates.",
+        why: "Access is often tied to job title, division, and department, so delays can prevent employees from getting the access they need after the effective date."
+      },
+      {
+        section: "Pipeline / Future Projects",
+        area: "Automation",
+        item: "Automate Employment Verification and Reduce Equifax Dependency",
+        details: "Equifax requires us to send employment verification data in a format that is completely different from how our payroll system provides it. Every two weeks, I extract payroll and employee data from BambooHR, convert it heavily in Google Sheets, download the CSV, and upload it to Equifax. This takes about 30 minutes every two weeks. I want to explore building an internal process where employment verifiers submit a form, we validate the request, and a script generates the employment verification without relying on Equifax.",
+        why: "This could reduce vendor dependency, save recurring manual work, improve the verification process, and potentially replace a costly service that currently creates almost as much work as it saves."
+      },
+      {
+        section: "Process / Access Changes",
+        area: "BambooHR Access",
+        item: "Remove Angie and Tara as BambooHR Admins",
+        details: "Angie and Tara currently have admin access because they were originally added to participate in Remote, but they did not end up participating in that process.",
+        why: "They do not appear to need admin access, and removing it would improve access control."
+      },
+      {
+        section: "Process / Access Changes",
+        area: "Contractor / Vendor Ownership",
+        item: "Pull Contractor and Vendor Onboarding and Offboarding Back to People Ops",
+        details: "Compliance currently owns some contractor and vendor onboarding and offboarding not through Remote, while People Ops already manages new hires, internal hires, rehires, EOR hires through Remote, and contractors through Remote.",
+        why: "It would create cleaner ownership to bring the remaining contractor and vendor processes under People Ops instead of splitting out two random pieces."
+      },
+      {
+        section: "Process / Access Changes",
+        area: "Job Information Approvals",
+        item: "Move Job Information Change Approvals to People Ops",
+        details: "Compliance currently approves job information changes in BambooHR.",
+        why: "It may make more sense for this to sit with People Ops because it ties directly to HRIS ownership, employee data, reporting, and access."
+      },
+      {
+        section: "Product Partnership",
+        area: "Product Team Alignment",
+        item: "Grow BambooHR Product Partnership",
+        details: "I spoke with Court Kristofferson about improving the relationship with Product Managers, especially related to AI work and opportunities for People Ops to provide more structured feedback.",
+        why: "People Ops can provide valuable alpha testing and feedback because we use BambooHR at a larger and more complex scale than many customers."
+      },
+      {
+        section: "Product Partnership",
+        area: "Product Manager Outreach",
+        item: "Use Team Transition to Reconnect With Product Managers",
+        details: "With Wende leaving and the team structure shifting, I want to reach out to Product Managers and explain how I envision People Ops partnering with them.",
+        why: "This creates a natural transition point to reset expectations and offer more structured support."
+      },
+      {
+        section: "Role Growth / What I Want",
+        area: "AI and Automation",
+        item: "More Ownership of AI and Automation Work",
+        details: "I want to continue growing ownership of AI and automation projects across People Ops.",
+        why: "There are several manual processes that could be streamlined, including terminations, Equifax reporting, survey dashboards, and AI assisted HR support."
+      },
+      {
+        section: "Role Growth / What I Want",
+        area: "HRIS Strategy",
+        item: "Cleaner System Ownership",
+        details: "I want BambooHR access, approvals, and ownership to be cleaner and more centralized where it makes sense.",
+        why: "This would improve controls, accountability, reporting accuracy, and process speed."
+      },
+      {
+        section: "Role Growth / What I Want",
+        area: "Product Partnership",
+        item: "Stronger Product Partnership",
+        details: "I want to become more directly involved with Product as features are being built, tested, and rolled out.",
+        why: "This is a strong opportunity for People Ops to help Product while also improving our own internal processes."
+      },
+      {
+        section: "Role Growth / What I Want",
+        area: "Reporting and Analytics",
+        item: "More Strategic Reporting and Survey Automation",
+        details: "I want to reduce manual reporting and dashboard work so I can spend more time on insights, analysis, and scalable reporting systems.",
+        why: "This would increase the value of reporting work and reduce repeated manual effort."
+      }
+    ];
+
+    const lastTwoWeeks = [
+      {
+        title: "Completed engagement survey reporting package",
+        detail: "Created manager, department, division, and SurveyMonkey reporting outputs with AI assisted spreadsheet generation."
+      },
+      {
+        title: "Processed reduction in force terminations",
+        detail: "Completed BambooHR termination work for roughly 15 reduction in force related terminations."
+      },
+      {
+        title: "Scheduled Wende team transition in BambooHR",
+        detail: "Initiated the team transition work in BambooHR, including my own reporting line change."
+      },
+      {
+        title: "Finalized implementation department transition",
+        detail: "Completed the transition from implementation to onboarding and payroll implementation to payroll onboarding."
+      },
+      {
+        title: "Joined Slack enterprise transition discussion",
+        detail: "Met with the team regarding the Slack enterprise transition and workspace conversion. More details are still to come."
+      },
+      {
+        title: "Reviewed Remote benefits offering",
+        detail: "Reviewed the Remote benefits offering with Kim Stout and Jordan Lewis."
+      },
+      {
+        title: "Improved Product partnership alignment",
+        detail: "Spoke with Court Kristofferson about improving Product Manager partnership, especially around AI related work."
+      },
+      {
+        title: "Supported Spring Huddle data needs",
+        detail: "Worked with Ariadna Matto to finalize employee numbers and information for Spring Huddle."
+      },
+      {
+        title: "Provided Tech division data support",
+        detail: "Worked with Becky Compton to provide updated data for the Tech team."
+      },
+      {
+        title: "Built first pass of Sales promo automation",
+        detail: "Created the first iteration of changes to the Sales and SDR promotion tracking spreadsheet and scheduled a review with Kim Ayala."
+      },
+      {
+        title: "Progressed Remote and Okta setup",
+        detail: "Continued setup of the Remote and Okta integration with Brian Siegel from IT."
+      },
+      {
+        title: "Escalated Remote pay timing issues",
+        detail: "Pushed Remote on recurring issues with employees not being paid on time."
+      },
+      {
+        title: "Updated internship benefits information",
+        detail: "Worked with Megan West in Recruiting on updated internship benefits language, including CLARE and pay on demand details."
+      }
+    ];
+
+    const nextTwoWeeks = [
+      {
+        title: "Finalize Sales and SDR promo automation",
+        detail: "Complete the automation so Sales does not have to manually log every promotion and hire into the sheet."
+      },
+      {
+        title: "Schedule Product Manager meetings for AI bot work",
+        detail: "Get involved with the AI bots being built in BambooHR during the sprint and identify where People Ops can help test or provide feedback."
+      },
+      {
+        title: "Continue Remote and Okta integration follow through",
+        detail: "Keep working with IT on setup and access management for people who need to use Remote."
+      },
+      {
+        title: "Start termination DocuSign automation",
+        detail: "Begin improving the automation for sending termination DocuSign agreements."
+      },
+      {
+        title: "Start NDA copy sending automation",
+        detail: "Begin improving the automation for sending copies of employee non disclosure agreements during termination."
+      },
+      {
+        title: "Move 2026 Focal performance ratings to historical table",
+        detail: "Move the 2026 Focal performance ratings from the current table to the historical table in the system."
+      },
+      {
+        title: "Capture survey wrap up and process notes",
+        detail: "Document what worked, what did not, and how to improve the process for next year."
+      },
+      {
+        title: "Continue HRBP and ad hoc reporting support",
+        detail: "Support reporting requests as they come in and identify anything that should become repeatable or automated."
+      }
+    ];
+
+    const sectionClassMap = {
+      "Current Responsibilities": "current",
+      "Active Projects": "active",
+      "Pipeline / Future Projects": "pipeline",
+      "Process / Access Changes": "process",
+      "Product Partnership": "growth",
+      "Role Growth / What I Want": "growth"
+    };
+
+    const sectionOrder = [
+      "Current Responsibilities",
+      "Active Projects",
+      "Pipeline / Future Projects",
+      "Process / Access Changes",
+      "Product Partnership",
+      "Role Growth / What I Want"
+    ];
+
+    const searchInput = document.getElementById("searchInput");
+    const sectionFilter = document.getElementById("sectionFilter");
+    const areaFilter = document.getElementById("areaFilter");
+    const content = document.getElementById("content");
+    const emptyState = document.getElementById("emptyState");
+    const summaryGrid = document.getElementById("summaryGrid");
+
+    function uniqueValues(key) {
+      return [...new Set(items.map(item => item[key]))].sort();
+    }
+
+    function populateFilters() {
+      sectionOrder.forEach(section => {
+        const option = document.createElement("option");
+        option.value = section;
+        option.textContent = section;
+        sectionFilter.appendChild(option);
+      });
+
+      uniqueValues("area").forEach(area => {
+        const option = document.createElement("option");
+        option.value = area;
+        option.textContent = area;
+        areaFilter.appendChild(option);
+      });
+    }
+
+    function renderSummary() {
+      summaryGrid.innerHTML = "";
+      const summaryItems = [
+        { label: "Current Responsibilities", value: items.filter(i => i.section === "Current Responsibilities").length },
+        { label: "Active Projects", value: items.filter(i => i.section === "Active Projects").length },
+        { label: "Pipeline Projects", value: items.filter(i => i.section === "Pipeline / Future Projects").length },
+        { label: "Process Changes", value: items.filter(i => i.section === "Process / Access Changes").length },
+        { label: "Growth Areas", value: items.filter(i => i.section === "Role Growth / What I Want").length }
+      ];
+
+      summaryItems.forEach(summary => {
+        const card = document.createElement("div");
+        card.className = "summary-card";
+        card.innerHTML = `<div class="number">${summary.value}</div><div class="label">${summary.label}</div>`;
+        summaryGrid.appendChild(card);
+      });
+    }
+
+    function renderTaskList(data, targetId) {
+      const target = document.getElementById(targetId);
+      target.innerHTML = data.map(item => `
+        <div class="task-item">
+          <div class="task-dot"></div>
+          <div class="task-text">
+            <strong>${item.title}</strong>
+            <span>${item.detail}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function cardTemplate(item) {
+      const tagClass = sectionClassMap[item.section] || "current";
+      return `
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <div class="area">${item.area}</div>
+              <h3>${item.item}</h3>
+            </div>
+          </div>
+          <div class="tag-row">
+            <span class="tag ${tagClass}">${item.section}</span>
+          </div>
+          <p class="details">${item.details}</p>
+          <div class="why-wrap">
+            <div class="why-label">Why it matters</div>
+            <p class="why">${item.why}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function getFilteredItems() {
+      const search = searchInput.value.toLowerCase().trim();
+      const selectedSection = sectionFilter.value;
+      const selectedArea = areaFilter.value;
+
+      return items.filter(item => {
+        const searchable = `${item.section} ${item.area} ${item.item} ${item.details} ${item.why}`.toLowerCase();
+        const matchesSearch = !search || searchable.includes(search);
+        const matchesSection = selectedSection === "All" || item.section === selectedSection;
+        const matchesArea = selectedArea === "All" || item.area === selectedArea;
+        return matchesSearch && matchesSection && matchesArea;
+      });
+    }
+
+    function render() {
+      const filtered = getFilteredItems();
+      content.innerHTML = "";
+      emptyState.style.display = filtered.length ? "none" : "block";
+
+      sectionOrder.forEach(section => {
+        const sectionItems = filtered.filter(item => item.section === section);
+        if (!sectionItems.length) return;
+
+        const sectionEl = document.createElement("section");
+        sectionEl.innerHTML = `
+          <div class="section-title">
+            <h2>${section}</h2>
+            <span>${sectionItems.length} item${sectionItems.length === 1 ? "" : "s"}</span>
+          </div>
+          <div class="cards">
+            ${sectionItems.map(cardTemplate).join("")}
+          </div>
+        `;
+        content.appendChild(sectionEl);
+      });
+    }
+
+    searchInput.addEventListener("input", render);
+    sectionFilter.addEventListener("change", render);
+    areaFilter.addEventListener("change", render);
+
+    populateFilters();
+    renderSummary();
+    renderTaskList(lastTwoWeeks, "lastTwoWeeksTasks");
+    renderTaskList(nextTwoWeeks, "nextTwoWeeksTasks");
+    render();
+  </script>
+</body>
+</html>
