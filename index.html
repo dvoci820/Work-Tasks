@@ -211,28 +211,31 @@
 
     .task-list {
       display: grid;
-      gap: 10px;
-      margin-top: 12px;
+      gap: 1px;
+      margin-top: 10px;
     }
 
     .task-item {
       display: flex;
-      gap: 10px;
+      gap: 9px;
       align-items: flex-start;
-      padding: 11px 12px;
-      background: #f8fbf6;
-      border: 1px solid var(--line);
-      border-radius: 14px;
+      padding: 5px 6px;
+      border-radius: 8px;
       font-size: 14px;
+      transition: background 0.12s;
+    }
+
+    .task-item:hover {
+      background: var(--green-soft);
     }
 
     .task-dot {
-      width: 9px;
-      height: 9px;
+      width: 5px;
+      height: 5px;
       border-radius: 999px;
       background: var(--green);
       flex: 0 0 auto;
-      margin-top: 6px;
+      margin-top: 7px;
     }
 
     .task-text {
@@ -241,12 +244,19 @@
 
     .task-text strong {
       display: block;
-      margin-bottom: 2px;
       color: var(--text);
+      font-weight: 600;
     }
 
     .task-text span {
+      display: none;
       color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .task-item:hover .task-text span {
+      display: block;
     }
 
     .highlight-list {
