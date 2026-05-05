@@ -259,6 +259,17 @@
       display: block;
     }
 
+    .task-item.priority .task-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green-dark);
+    }
+
+    .task-item.priority .task-text strong {
+      font-weight: 800;
+      color: var(--green-dark);
+    }
+
     .highlight-list {
       margin: 14px 0 0;
       padding-left: 20px;
@@ -906,6 +917,11 @@
 
     const nextTwoWeeks = [
       {
+        title: "Build out Remote manager guides and employee guides",
+        detail: "Especially around timesheets — ensure both managers and employees have clear guidance on Remote timesheet expectations and submission.",
+        priority: true
+      },
+      {
         title: "Meet with Abby Charles and Mackenzie Sawyer — assessment feature revamp",
         detail: "May 6. Discussing how they are revamping the assessment feature to make it more customizable so we can give feedback."
       },
@@ -1035,7 +1051,7 @@
     function renderTaskList(data, targetId) {
       const target = document.getElementById(targetId);
       target.innerHTML = data.map(item => `
-        <div class="task-item">
+        <div class="task-item${item.priority ? " priority" : ""}">
           <div class="task-dot"></div>
           <div class="task-text">
             <strong>${item.title}</strong>
